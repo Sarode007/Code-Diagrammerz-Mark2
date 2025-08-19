@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Java Code to Mermaid Diagram</title>
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { display: flex; gap: 20px; }
+        .input-section, .output-section { flex: 1; }
+        
+        #diagram { 
+            min-height: 300px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        .mermaid { width: 100%; overflow: auto; }
+
+        .tab { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; }
+        .tab button { 
+            background-color: inherit; 
+            float: left; 
+            border: none; 
+            outline: none; 
+            cursor: pointer; 
+            padding: 10px 16px; 
+            transition: 0.3s; 
+        }
+        .tab button:hover { background-color: #ddd; }
+        .tab button.active { background-color: #ccc; }
+        .tabcontent { 
+            display: none; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-top: none; 
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        input[type="submit"]:hover { background: #45a049; }
+
+        #diagramSyntax {
+            display: none;
+            width: 100%;
+            height: 200px;
+            margin-top: 10px;
+        }
+        .view-toggle { margin: 10px 0; }
+
+        /* Upload styles */
+        .upload-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .upload-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .upload-option:hover {
+            border-color: #4CAF50;
+            background-color: #f8f8f8;
+        }
+        .upload-option input { display: none; }
+        .file-info {
+            margin: 10px 0;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        #codemirrorEditor { height: 300px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Java Code to Mermaid Diagram</h1>
+    
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'uploadTab')">Upload Files</button>
+                <button class="tablinks" onclick="openTab(event, 'editorTab')">Code Editor</button>
+            </div>
+            
+            <!-- Upload Tab -->
+            <div id="uploadTab" class="tabcontent" style="display:block;">
+                <form id="uploadForm" method="post" enctype="multipart/form-data">
+                    <div class="upload-options">
+                        <label class="upload-option">
+                            <span>📄 Upload Java Files</span>
+                            <input type="file" name="javaFiles" multiple accept=".java" />
+                        </label>
+                        <label class="upload-option">
+                            <span>📁 Upload Folder</span>
+                            <input type="file" name="folderFiles" webkitdirectory directory multiple />
+                        </label>
+                    </div>
+                    <div id="fileInfo" class="file-info">No files selected</div>
+                    <input type="submit" value="Class Diagram" />
+                </form>
+            </div>
+            
+            <!-- Editor Tab -->
+            <div id="editorTab" class="tabcontent">
+                <form id="editorForm" method="post">
+                    <textarea id="javaEditor" name="code" style="display:none;"></textarea>
+                    <div id="codemirrorEditor"></div>
+                    <input type="submit" value="Class Diagram" />
+                </form>
+            </div>
+        </div>
+        
+        <!-- Output Section -->
+        <div class="output-section">
+            <h3>Mermaid Diagram:</h3>
+            <div class="view-toggle">
+                <button onclick="showDiagram()">Show Diagram</button>
+                <button onclick="showSyntax()">Show Syntax</button>
+            </div>
+            <div id="diagram"></div>
+            <textarea id="diagramSyntax" ></textarea>
+        </div>
+    </div>
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    
+
+    <script>
+        // Mermaid setup
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'base',
+            flowchart: { useMaxWidth: true }
+        });
+
+        // Initialize CodeMirror
+        var codeMirrorEditor = CodeMirror(document.getElementById('codemirrorEditor'), {
+            value: "",
+            mode: "text/x-java",
+            theme: "dracula",
+            lineNumbers: true,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            indentUnit: 4,
+            tabSize: 4,
+            indentWithTabs: true
+        });
+        codeMirrorEditor.setSize("100%", "100%");
+
+        // Tabs
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Upload file info
+        document.querySelector('input[name="javaFiles"]').addEventListener('change', function(e) {
+            updateFileInfo(e.target.files, 'Java files');
+        });
+        document.querySelector('input[name="folderFiles"]').addEventListener('change', function(e) {
+            updateFileInfo(e.target.files, 'Folder contents');
+        });
+        function updateFileInfo(files, type) {
+            const fileInfo = document.getElementById('fileInfo');
+            if (files.length === 0) {
+                fileInfo.textContent = 'No files selected';
+            } else {
+                const javaFiles = Array.from(files).filter(f => f.name.endsWith('.java'));
+                const otherFiles = files.length - javaFiles.length;
+                let info = `${type} selected: ${files.length} items`;
+                if (files[0].webkitRelativePath) {
+                    const folderName = files[0].webkitRelativePath.split('/')[0];
+                    info = `Folder "${folderName}" selected: ${files.length} items`;
+                }
+                if (otherFiles > 0) {
+                    info += ` (${javaFiles.length} Java files, ${otherFiles} other files)`;
+                } else {
+                    info += ` (${javaFiles.length} Java files)`;
+                }
+                fileInfo.textContent = info;
+            }
+        }
+
+        // Show/hide views
+        function showDiagram() {
+            document.getElementById('diagram').style.display = 'block';
+            document.getElementById('diagramSyntax').style.display = 'none';
+        }
+        function showSyntax() {
+            document.getElementById('diagram').style.display = 'none';
+            document.getElementById('diagramSyntax').style.display = 'block';
+        }
+
+        // Handle Upload Form
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            const javaFiles = document.querySelector('input[name="javaFiles"]').files;
+            for (let i = 0; i < javaFiles.length; i++) {
+                formData.append('files', javaFiles[i]);
+            }
+            const folderFiles = document.querySelector('input[name="folderFiles"]').files;
+            for (let i = 0; i < folderFiles.length; i++) {
+                if (folderFiles[i].name.endsWith('.java')) {
+                    formData.append('files', folderFiles[i]);
+                }
+            }
+            submitFormData(formData);
+        });
+
+        // Handle Editor Form
+        document.getElementById('editorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('javaEditor').value = codeMirrorEditor.getValue();
+            submitForm(this);
+        });
+
+        // Submit Upload
+        function submitFormData(formData) {
+            var diagramDiv = document.getElementById('diagram');
+            var syntaxTextarea = document.getElementById('diagramSyntax');
+            diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+            showDiagram();
+            const contextPath = window.location.pathname.split('/')[1];
+            const servletPath = '/DiagramGenerator';
+            fetch(`/${contextPath}${servletPath}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.text())
+            .then(data => renderDiagram(data))
+            .catch(error => {
+                diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+            });
+        }
+
+        // Submit Editor
+        function submitForm(form) {
+            var formData = new FormData(form);
+            var diagramDiv = document.getElementById('diagram');
+            diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+            showDiagram();
+            const contextPath = window.location.pathname.split('/')[1];
+            const servletPath = '/DiagramGenerator';
+            fetch(`/${contextPath}${servletPath}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.text())
+            .then(data => renderDiagram(data))
+            .catch(error => {
+                diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+            });
+        }
+
+        // Render diagram
+        function renderDiagram(data) {
+            var diagramDiv = document.getElementById('diagram');
+            var syntaxTextarea = document.getElementById('diagramSyntax');
+            syntaxTextarea.value = data;
+            diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
+            mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Java Code to Mermaid Diagram</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { display: flex; gap: 20px; }
+        .input-section, .output-section { flex: 1; }
+        textarea { width: 100%; height: 300px; }
+        #diagram { 
+            background: #f5f5f5; 
+            padding: 10px; 
+            white-space: pre-wrap;
+            font-family: monospace;
+            min-height: 300px;
+            border: 1px solid #ddd;
+        }
+        .tab { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; }
+        .tab button { 
+            background-color: inherit; 
+            float: left; 
+            border: none; 
+            outline: none; 
+            cursor: pointer; 
+            padding: 10px 16px; 
+            transition: 0.3s; 
+        }
+        .tab button:hover { background-color: #ddd; }
+        .tab button.active { background-color: #ccc; }
+        .tabcontent { 
+            display: none; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-top: none; 
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Java Code to Mermaid Diagram</h1>
+    
+    <div class="container">
+        <div class="input-section">
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'uploadTab')">Upload Files</button>
+                <button class="tablinks" onclick="openTab(event, 'editorTab')">Code Editor</button>
+            </div>
+            
+            <div id="uploadTab" class="tabcontent" style="display: block;">
+                <form id="uploadForm" method="post" enctype="multipart/form-data">
+                    <p>Upload Java files or folder (zip):</p>
+                    <input type="file" name="files" multiple accept=".java,.zip" /><br/><br/>
+                    <input type="submit" value="Generate Diagram" />
+                </form>
+            </div>
+            
+            <div id="editorTab" class="tabcontent">
+                <form id="editorForm" method="post">
+                    <textarea name="code" placeholder="Paste your Java code here..."></textarea><br/>
+                    <input type="submit" value="Generate Diagram" />
+                </form>
+            </div>
+        </div>
+        
+        <div class="output-section">
+            <h3>Mermaid Diagram:</h3>
+            <div id="diagram">Diagram will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitForm(this);
+        });
+
+        document.getElementById('editorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitForm(this);
+        });
+
+        function submitForm(form) {
+            var formData = new FormData(form);
+            var diagramDiv = document.getElementById('diagram');
+            diagramDiv.textContent = "Generating diagram...";
+            
+            // Get the current context path dynamically
+            const contextPath = window.location.pathname.split('/')[1];
+            const servletPath = '/DiagramGenerator';
+            
+            fetch(`/${contextPath}${servletPath}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                diagramDiv.textContent = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                diagramDiv.textContent = 'Error generating diagram: ' + error.message;
+            });
+        }
+
+/* function submitForm(form) {
+            var formData = new FormData(form);
+            var diagramDiv = document.getElementById('diagram');
+            var syntaxTextarea = document.getElementById('diagramSyntax');
+            
+            diagramDiv.innerHTML = '<div style="padding: 20px; text-align: center;">Generating diagram...</div>';
+            showDiagram();
+            
+            // Get the current context path dynamically
+            const contextPath = window.location.pathname.split('/')[1];
+            const servletPath = '/DiagramGenerator';
+            
+            fetch(`/${contextPath}${servletPath}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Store the syntax
+                syntaxTextarea.value = data;
+                
+                // Render the diagram
+                diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
+                
+                // Initialize Mermaid to render the diagram
+                mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                diagramDiv.innerHTML = '<div style="color: red;">Error generating diagram: ' + error.message + '</div>';
+            });
+        }*/
+
+
+    </script>
+</body>
+</html>
+
+-->
+
+
+
