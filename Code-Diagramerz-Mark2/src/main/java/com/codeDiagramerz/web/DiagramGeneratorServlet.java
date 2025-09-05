@@ -33,61 +33,75 @@ import jakarta.servlet.http.Part;
 public class DiagramGeneratorServlet extends HttpServlet {
 
 	@Override
-    
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        
-        response.setContentType("text/plain;charset=UTF-8");
-        PrintWriter out = response.getWriter();
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+	        throws ServletException, IOException {
+	    
+	    response.setContentType("text/plain;charset=UTF-8");
+	    PrintWriter out = response.getWriter();
+	    out.flush();	
 
-        try {
-            List<File> javaFiles = new ArrayList<>();
+	    try {
+	        List<File> javaFiles = new ArrayList<>();
+	        System.out.println("At Start: "+javaFiles);
 
-            // Handle all uploaded files (both from Java files and folder upload)
-            for (Part part : request.getParts()) {
-                if (part.getSubmittedFileName() != null && part.getSubmittedFileName().endsWith(".java")) {
-                    File tempFile = File.createTempFile("java_", ".java");
-                    
-                    try (InputStream input = part.getInputStream()) {
-                        Files.copy(input, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    }
-                    javaFiles.add(tempFile);
-                }
-            }
-            
-            
-            
-            
-            
+	        // Handle all uploaded files
+	        for (Part part : request.getParts()) {
+	            String fileName = part.getSubmittedFileName();
+	            if (fileName != null && fileName.endsWith(".java")) 
+	            {
 
-            if (javaFiles.isEmpty()) {
-                out.println("❌ No valid Java files found to process");
-                return;
-            }
+	                File tempFile = File.createTempFile("java_", ".java");
+	                
+	                try (InputStream input = part.getInputStream()) {
+	                    Files.copy(input, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	                }
+	                javaFiles.add(tempFile);
 
-            EnhancedJavaParser parser = new EnhancedJavaParser();
-            for (File file : javaFiles) {
-                parser.parsePath(file);
-                file.delete();
-            }
+	            	
+	            }
+	        }
 
-            Map<String, ParsedClass> classes = parser.getParsedClasses();
-            Map<String, ParsedEnum> enums = parser.getParsedEnums();
-            Map<String, Set<String>> deps = parser.getClassDeps();
-            Map<String, Set<String>> inheritance = parser.getInheritance();
-            Map<String, Set<String>> interfaces = parser.getInterfaces();
+	        // Handle code from editor
+	        String code = request.getParameter("code");
+	        if ((javaFiles.isEmpty()) && code != null && !code.trim().isEmpty()) {
+	            File tempFile = File.createTempFile("java_", ".java");
+	            Files.write(tempFile.toPath(), code.getBytes());
+	            javaFiles.add(tempFile);
+	            tempFile.delete();
+	        }
 
-            MermaidDiagramPrinter printer = new MermaidDiagramPrinter(
-                classes, enums, deps, inheritance, interfaces);
-            printer.printDiagram(out);
+	        if (javaFiles.isEmpty()) {
+	            out.println("❌ No valid Java files found to process");
+	            return;
+	        }
 
-        } catch (Exception e) {
-            out.println("❌ Error generating diagram: " + e.getMessage());
-            e.printStackTrace(out);
-        }
-    }
+	        EnhancedJavaParser parser = new EnhancedJavaParser();
+	        for (File file : javaFiles) {
+	            parser.parsePath(file);
+	            file.delete(); // Clean up temp file
+	        }
 
 
+	        Map<String, ParsedClass> classes = parser.getParsedClasses();
+	        Map<String, ParsedEnum> enums = parser.getParsedEnums();
+	        Map<String, Set<String>> deps = parser.getClassDeps();
+	        Map<String, Set<String>> inheritance = parser.getInheritance();
+	        Map<String, Set<String>> interfaces = parser.getInterfaces();
+
+	        MermaidDiagramPrinter printer = new MermaidDiagramPrinter(
+	            classes, enums, deps, inheritance, interfaces);
+	        printer.printDiagram(out);
+	        System.out.println("At End: "+javaFiles);
+	        javaFiles = null;
+	        System.out.println("At End2: "+javaFiles);
+
+	    } catch (Exception e) {
+	        out.println("❌ Error generating diagram: " + e.getMessage());
+	        e.printStackTrace(out);
+	    }
+	}
+
+}
 
 
 
@@ -97,6 +111,62 @@ public class DiagramGeneratorServlet extends HttpServlet {
 
 
 
+
+// Mark2.0 =>
+
+//@Override
+//protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+//      throws ServletException, IOException {
+//  
+//  response.setContentType("text/plain;charset=UTF-8");
+//  PrintWriter out = response.getWriter();
+//
+//  try {
+//      List<File> javaFiles = new ArrayList<>();
+//
+//      // Handle all uploaded files (both from Java files and folder upload)
+//      for (Part part : request.getParts()) {
+//          if (part.getSubmittedFileName() != null && part.getSubmittedFileName().endsWith(".java")) {
+//              File tempFile = File.createTempFile("java_", ".java");
+//              
+//              try (InputStream input = part.getInputStream()) {
+//                  Files.copy(input, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//              }
+//              javaFiles.add(tempFile);
+//          }
+//      }
+//      
+//      
+//      
+//      
+//      
+//
+//      if (javaFiles.isEmpty()) {
+//          out.println("❌ No valid Java files found to process");
+//          return;
+//      }
+//
+//      EnhancedJavaParser parser = new EnhancedJavaParser();
+//      for (File file : javaFiles) {
+//          parser.parsePath(file);
+//          file.delete();
+//      }
+//
+//      Map<String, ParsedClass> classes = parser.getParsedClasses();
+//      Map<String, ParsedEnum> enums = parser.getParsedEnums();
+//      Map<String, Set<String>> deps = parser.getClassDeps();
+//      Map<String, Set<String>> inheritance = parser.getInheritance();
+//      Map<String, Set<String>> interfaces = parser.getInterfaces();
+//
+//      MermaidDiagramPrinter printer = new MermaidDiagramPrinter(
+//          classes, enums, deps, inheritance, interfaces);
+//      printer.printDiagram(out);
+//
+//  } catch (Exception e) {
+//      out.println("❌ Error generating diagram: " + e.getMessage());
+//      e.printStackTrace(out);
+//  }
+//}
 
     
     
@@ -182,4 +252,3 @@ public class DiagramGeneratorServlet extends HttpServlet {
 //            }
 //        }
 //    }
-}

@@ -7,6 +7,11 @@ import java.util.List;
 public class FileScannerUtil {
     public static void findAllJavaFiles(File dir, List<File> javaFiles) {
         File[] files = dir.listFiles();
+        if(files.length!=0) {
+        	files=null;
+        }
+        
+      //  javaFiles.clear();
         if (files == null) return;
         for (File f : files) {
             if (f.isDirectory()) {

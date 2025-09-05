@@ -11,18 +11,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { display: flex; gap: 20px; }
-        .input-section, .output-section { flex: 1; }
+        body { 
+        font-family: Arial, sans-serif; 
+        margin: 20px; 
+        }
+        
+        .container { 
+        display: flex; 
+        gap: 20px; 
+        }
+        
+        .input-section, .output-section { 
+        flex: 1; 
+        }
         
         #diagram { 
             min-height: 300px;
             border: 1px solid #ddd;
             padding: 10px;
         }
-        .mermaid { width: 100%; overflow: auto; }
+        .mermaid { 
+        width: 100%; 
+        overflow: auto; 
+        }
 
-        .tab { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; }
+        .tab { 
+        overflow: hidden; 
+        border: 1px solid #ccc; 
+        background-color: #f1f1f1; 
+        }
+        
         .tab button { 
             background-color: inherit; 
             float: left; 
@@ -32,8 +50,14 @@
             padding: 10px 16px; 
             transition: 0.3s; 
         }
-        .tab button:hover { background-color: #ddd; }
-        .tab button.active { background-color: #ccc; }
+        .tab button:hover { 
+        background-color: #ddd; 
+        }
+        
+        .tab button.active { 
+        background-color: #ccc; 
+        }
+        
         .tabcontent { 
             display: none; 
             padding: 10px; 
@@ -50,7 +74,9 @@
             cursor: pointer;
             border-radius: 4px;
         }
-        input[type="submit"]:hover { background: #45a049; }
+        input[type="submit"]:hover { 
+        background: #45a049; 
+        }
 
         #diagramSyntax {
             display: none;
@@ -58,7 +84,9 @@
             height: 200px;
             margin-top: 10px;
         }
-        .view-toggle { margin: 10px 0; }
+        .view-toggle { 
+        margin: 10px 0; 
+        }
 
         /* Upload styles */
         .upload-options {
@@ -78,14 +106,21 @@
             border-color: #4CAF50;
             background-color: #f8f8f8;
         }
-        .upload-option input { display: none; }
+        .upload-option input { 
+        	display: none; 
+        }
+        
         .file-info {
             margin: 10px 0;
             padding: 8px;
             background: #f5f5f5;
             border-radius: 4px;
         }
-        #codemirrorEditor { height: 300px; border: 1px solid #ddd; }
+        #codemirrorEditor { 
+        height: 300px; 
+        border: 1px solid #ddd; 
+        }
+        
     </style>
 </head>
 <body>
@@ -133,6 +168,7 @@
             <div class="view-toggle">
                 <button onclick="showDiagram()">Show Diagram</button>
                 <button onclick="showSyntax()">Show Syntax</button>
+                <button class="clear-btn" onclick="clearDiagram()">Clear Diagram</button>
             </div>
             <div id="diagram"></div>
             <textarea id="diagramSyntax" ></textarea>
@@ -167,6 +203,8 @@
             indentWithTabs: true
         });
         codeMirrorEditor.setSize("100%", "100%");
+
+        
 
         // Tabs
         function openTab(evt, tabName) {
@@ -290,6 +328,16 @@
             syntaxTextarea.value = data;
             diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
             mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
+        }
+        
+        
+        function clearDiagram() {
+            document.getElementById('diagram').innerHTML = '';
+            document.getElementById('diagramSyntax').value = '';
+            document.querySelector('input[name="javaFiles"]').value = '';
+            document.querySelector('input[name="folderFiles"]').value = '';
+            document.getElementById('fileInfo').textContent = 'No files selected';
+            codeMirrorEditor.setValue('');
         }
     </script>
 </body>

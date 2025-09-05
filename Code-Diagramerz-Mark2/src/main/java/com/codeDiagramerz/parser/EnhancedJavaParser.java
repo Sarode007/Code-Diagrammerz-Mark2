@@ -25,6 +25,7 @@ public class EnhancedJavaParser {
 
     public void parsePath(File path) {
         List<File> javaFiles = new ArrayList<>();
+        javaFiles.clear();
         if (path.isDirectory()) {
             FileScannerUtil.findAllJavaFiles(path, javaFiles);
         } else if (path.getName().endsWith(".java")) {
@@ -46,11 +47,13 @@ public class EnhancedJavaParser {
                     ParsedClass parsedClass = new ParsedClass(cls, classDeps, inheritance, interfaces);
                     parsedClasses.put(parsedClass.getName(), parsedClass);
                 }
+
             } catch (Exception e) {
                 System.err.println("⚠️ Error parsing file: " + file.getAbsolutePath());
                 System.err.println("Error: " + e.getMessage());
             }
         }
+        
     }
 
     public Map<String, ParsedClass> getParsedClasses() {
