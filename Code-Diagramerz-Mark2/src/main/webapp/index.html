@@ -19,6 +19,7 @@
         .container { 
         display: flex; 
         gap: 20px; 
+        height: 100vh;
         }
         
         .input-section, .output-section { 
@@ -64,7 +65,12 @@
             border: 1px solid #ccc; 
             border-top: none; 
             margin-bottom: 10px;
+            
         }
+
+
+
+
 
         input[type="submit"] {
             padding: 8px 16px;
@@ -117,7 +123,8 @@
             border-radius: 4px;
         }
         #codemirrorEditor { 
-        height: 300px; 
+        height: 100vh; 
+        width : 700px;
         border: 1px solid #ddd; 
         }
         
@@ -283,6 +290,7 @@
             submitForm(this);
         });
 
+
         // Submit Upload
         function submitFormData(formData) {
             var diagramDiv = document.getElementById('diagram');
@@ -296,7 +304,10 @@
                 body: formData
             })
             .then(r => r.text())
-            .then(data => renderDiagram(data))
+            .then(data => {
+                renderDiagram(data);
+                document.getElementById('uploadForm').reset();
+            })
             .catch(error => {
                 diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
             });
@@ -324,6 +335,7 @@
         // Render diagram
         function renderDiagram(data) {
             var diagramDiv = document.getElementById('diagram');
+            diagramDiv.innerHtml = ""
             var syntaxTextarea = document.getElementById('diagramSyntax');
             syntaxTextarea.value = data;
             diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';

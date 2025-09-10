@@ -42,7 +42,7 @@ public class DiagramGeneratorServlet extends HttpServlet {
 
 	    try {
 	        List<File> javaFiles = new ArrayList<>();
-	        System.out.println("At Start: "+javaFiles);
+//	        System.out.println("At Start: "+javaFiles);    //for checking tempIfiles 
 
 	        // Handle all uploaded files
 	        for (Part part : request.getParts()) {
@@ -67,7 +67,6 @@ public class DiagramGeneratorServlet extends HttpServlet {
 	            File tempFile = File.createTempFile("java_", ".java");
 	            Files.write(tempFile.toPath(), code.getBytes());
 	            javaFiles.add(tempFile);
-	            tempFile.delete();
 	        }
 
 	        if (javaFiles.isEmpty()) {
@@ -91,9 +90,9 @@ public class DiagramGeneratorServlet extends HttpServlet {
 	        MermaidDiagramPrinter printer = new MermaidDiagramPrinter(
 	            classes, enums, deps, inheritance, interfaces);
 	        printer.printDiagram(out);
-	        System.out.println("At End: "+javaFiles);
-	        javaFiles = null;
-	        System.out.println("At End2: "+javaFiles);
+//	        System.out.println("At End: "+javaFiles);
+//	        javaFiles = null;
+//	        System.out.println("At End2: "+javaFiles);
 
 	    } catch (Exception e) {
 	        out.println("❌ Error generating diagram: " + e.getMessage());
