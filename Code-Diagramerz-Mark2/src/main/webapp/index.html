@@ -19,7 +19,7 @@
         .container { 
             display: flex; 
             gap: 20px; 
-            height: 100vh;
+            
         }
         
         .input-section, .output-section { 
@@ -41,6 +41,7 @@
             overflow: hidden; 
             border: 1px solid #ccc; 
             background-color: #f1f1f1; 
+            
         }
         
         .tab button { 
@@ -168,7 +169,7 @@
         }
         
         #codemirrorEditor { 
-            height: 100vh; 
+            height: 300px; 
             width: 700px;
             border: 1px solid #ddd; 
         }
@@ -191,8 +192,8 @@
                 <div class="diagram-type-selector">
                     <label>Select Diagram Type:</label>
                     <div class="diagram-options">
-                        <label><input type="radio" name="diagramType" value="class" checked> 🅲 Class Diagram</label>
-                        <label><input type="radio" name="diagramType" value="sequence"> 📈 Sequence Diagram</label>
+                        <label><input type="radio" name="diagramType" value="class" checked>Class Diagram</label>
+                        <label><input type="radio" name="diagramType" value="sequence">Sequence Diagram</label>
                     </div>
                     <div class="sequence-options" id="sequenceOptionsUpload">
                         <label>Entry Point (Optional):</label><br>
@@ -205,11 +206,11 @@
                 <form id="uploadForm" method="post" enctype="multipart/form-data">
                     <div class="upload-options">
                         <label class="upload-option">
-                            <span>📄 Upload Java Files</span>
+                            <span>Upload Java Files</span>
                             <input type="file" name="javaFiles" multiple accept=".java" />
                         </label>
                         <label class="upload-option">
-                            <span>📁 Upload Folder</span>
+                            <span>Upload Folder</span>
                             <input type="file" name="folderFiles" webkitdirectory directory multiple />
                         </label>
                     </div>
@@ -224,15 +225,15 @@
                 <div class="diagram-type-selector">
                     <label>Select Diagram Type:</label>
                     <div class="diagram-options">
-                        <label><input type="radio" name="diagramTypeEditor" value="class" checked> 🅲 Class Diagram</label>
-                        <label><input type="radio" name="diagramTypeEditor" value="sequence"> 📈 Sequence Diagram</label>
+                        <label><input type="radio" name="diagramTypeEditor" value="class" checked>Class Diagram</label>
+                        <label><input type="radio" name="diagramTypeEditor" value="sequence">Sequence Diagram</label>
                     </div>
-                    <div class="sequence-options" id="sequenceOptionsEditor">
+                    <!-- <div class="sequence-options" id="sequenceOptionsEditor">
                         <label>Entry Point (Optional):</label><br>
                         <input type="text" name="entryClassEditor" placeholder="Class name (e.g., UserService)" />
                         <input type="text" name="entryMethodEditor" placeholder="Method name (e.g., createUser)" />
                         <small>Leave empty to generate sequence for all public methods</small>
-                    </div>
+                    </div> -->
                 </div>
                 
                 <form id="editorForm" method="post">
