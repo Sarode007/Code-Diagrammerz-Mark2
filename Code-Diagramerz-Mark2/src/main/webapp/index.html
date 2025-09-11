@@ -12,18 +12,18 @@
 
     <style>
         body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
+        font-family: Arial, sans-serif; 
+        margin: 20px; 
         }
         
         .container { 
-            display: flex; 
-            gap: 20px; 
-            
+        display: flex; 
+        gap: 20px; 
+        height: 100vh;
         }
         
         .input-section, .output-section { 
-            flex: 1; 
+        flex: 1; 
         }
         
         #diagram { 
@@ -31,17 +31,15 @@
             border: 1px solid #ddd;
             padding: 10px;
         }
-        
         .mermaid { 
-            width: 100%; 
-            overflow: auto; 
+        width: 100%; 
+        overflow: auto; 
         }
 
         .tab { 
-            overflow: hidden; 
-            border: 1px solid #ccc; 
-            background-color: #f1f1f1; 
-            
+        overflow: hidden; 
+        border: 1px solid #ccc; 
+        background-color: #f1f1f1; 
         }
         
         .tab button { 
@@ -53,13 +51,12 @@
             padding: 10px 16px; 
             transition: 0.3s; 
         }
-        
         .tab button:hover { 
-            background-color: #ddd; 
+        background-color: #ddd; 
         }
         
         .tab button.active { 
-            background-color: #ccc; 
+        background-color: #ccc; 
         }
         
         .tabcontent { 
@@ -68,61 +65,23 @@
             border: 1px solid #ccc; 
             border-top: none; 
             margin-bottom: 10px;
+            
         }
 
-        .diagram-type-selector {
-            background: #f8f8f8;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
 
-        .diagram-type-selector label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
 
-        .diagram-options {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
 
-        .sequence-options {
-            display: none;
-            background: #eeeeee;
-            padding: 10px;
-            border-radius: 3px;
-            margin-top: 10px;
-        }
 
-        .sequence-options input {
-            margin: 5px 0;
-            padding: 5px;
-            width: 200px;
-        }
-
-        input[type="submit"], button {
+        input[type="submit"] {
             padding: 8px 16px;
             background: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
             border-radius: 4px;
-            margin: 5px;
         }
-
-        input[type="submit"]:hover, button:hover { 
-            background: #45a049; 
-        }
-
-        .sequence-btn {
-            background: #2196F3;
-        }
-
-        .sequence-btn:hover {
-            background: #1976D2;
+        input[type="submit"]:hover { 
+        background: #45a049; 
         }
 
         #diagramSyntax {
@@ -131,9 +90,8 @@
             height: 200px;
             margin-top: 10px;
         }
-        
         .view-toggle { 
-            margin: 10px 0; 
+        margin: 10px 0; 
         }
 
         /* Upload styles */
@@ -142,7 +100,6 @@
             gap: 10px;
             margin-bottom: 15px;
         }
-        
         .upload-option {
             flex: 1;
             padding: 15px;
@@ -151,14 +108,12 @@
             text-align: center;
             cursor: pointer;
         }
-        
         .upload-option:hover {
             border-color: #4CAF50;
             background-color: #f8f8f8;
         }
-        
         .upload-option input { 
-            display: none; 
+        	display: none; 
         }
         
         .file-info {
@@ -167,17 +122,16 @@
             background: #f5f5f5;
             border-radius: 4px;
         }
-        
         #codemirrorEditor { 
-            height: 300px; 
-            width: 700px;
-            border: 1px solid #ddd; 
+        height: 100vh; 
+        width : 700px;
+        border: 1px solid #ddd; 
         }
         
     </style>
 </head>
 <body>
-    <h1>Java Code to Mermaid Diagram Generator</h1>
+    <h1>Java Code to Mermaid Diagram</h1>
     
     <div class="container">
         <!-- Input Section -->
@@ -189,58 +143,28 @@
             
             <!-- Upload Tab -->
             <div id="uploadTab" class="tabcontent" style="display:block;">
-                <div class="diagram-type-selector">
-                    <label>Select Diagram Type:</label>
-                    <div class="diagram-options">
-                        <label><input type="radio" name="diagramType" value="class" checked>Class Diagram</label>
-                        <label><input type="radio" name="diagramType" value="sequence">Sequence Diagram</label>
-                    </div>
-                    <div class="sequence-options" id="sequenceOptionsUpload">
-                        <label>Entry Point (Optional):</label><br>
-                        <input type="text" name="entryClass" placeholder="Class name (e.g., UserService)" />
-                        <input type="text" name="entryMethod" placeholder="Method name (e.g., createUser)" />
-                        <small>Leave empty to generate sequence for all public methods</small>
-                    </div>
-                </div>
-                
                 <form id="uploadForm" method="post" enctype="multipart/form-data">
                     <div class="upload-options">
                         <label class="upload-option">
-                            <span>Upload Java Files</span>
+                            <span>📄 Upload Java Files</span>
                             <input type="file" name="javaFiles" multiple accept=".java" />
                         </label>
                         <label class="upload-option">
-                            <span>Upload Folder</span>
+                            <span>📁 Upload Folder</span>
                             <input type="file" name="folderFiles" webkitdirectory directory multiple />
                         </label>
                     </div>
                     <div id="fileInfo" class="file-info">No files selected</div>
-                    <input type="submit" value="Generate Class Diagram" id="uploadSubmitBtn" />
-                    <input type="submit" value="Generate Sequence Diagram" class="sequence-btn" id="uploadSequenceBtn" style="display:none;" />
+                    <input type="submit" value="Class Diagram" />
                 </form>
             </div>
             
             <!-- Editor Tab -->
             <div id="editorTab" class="tabcontent">
-                <div class="diagram-type-selector">
-                    <label>Select Diagram Type:</label>
-                    <div class="diagram-options">
-                        <label><input type="radio" name="diagramTypeEditor" value="class" checked>Class Diagram</label>
-                        <label><input type="radio" name="diagramTypeEditor" value="sequence">Sequence Diagram</label>
-                    </div>
-                    <!-- <div class="sequence-options" id="sequenceOptionsEditor">
-                        <label>Entry Point (Optional):</label><br>
-                        <input type="text" name="entryClassEditor" placeholder="Class name (e.g., UserService)" />
-                        <input type="text" name="entryMethodEditor" placeholder="Method name (e.g., createUser)" />
-                        <small>Leave empty to generate sequence for all public methods</small>
-                    </div> -->
-                </div>
-                
                 <form id="editorForm" method="post">
                     <textarea id="javaEditor" name="code" style="display:none;"></textarea>
                     <div id="codemirrorEditor"></div>
-                    <input type="submit" value="Generate Class Diagram" id="editorSubmitBtn" />
-                    <input type="submit" value="Generate Sequence Diagram" class="sequence-btn" id="editorSequenceBtn" style="display:none;" />
+                    <input type="submit" value="Class Diagram" />
                 </form>
             </div>
         </div>
@@ -254,7 +178,7 @@
                 <button class="clear-btn" onclick="clearDiagram()">Clear Diagram</button>
             </div>
             <div id="diagram"></div>
-            <textarea id="diagramSyntax"></textarea>
+            <textarea id="diagramSyntax" ></textarea>
         </div>
     </div>
 
@@ -262,7 +186,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
     
 
     <script>
@@ -270,8 +194,7 @@
         mermaid.initialize({ 
             startOnLoad: false,
             theme: 'base',
-            flowchart: { useMaxWidth: true },
-            sequence: { useMaxWidth: true }
+            flowchart: { useMaxWidth: true }
         });
 
         // Initialize CodeMirror
@@ -288,37 +211,7 @@
         });
         codeMirrorEditor.setSize("100%", "100%");
 
-        // Diagram type change handlers
-        document.querySelectorAll('input[name="diagramType"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                toggleSequenceOptions('sequenceOptionsUpload', this.value === 'sequence');
-                toggleSubmitButtons('upload', this.value === 'sequence');
-            });
-        });
-
-        document.querySelectorAll('input[name="diagramTypeEditor"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                toggleSequenceOptions('sequenceOptionsEditor', this.value === 'sequence');
-                toggleSubmitButtons('editor', this.value === 'sequence');
-            });
-        });
-
-        function toggleSequenceOptions(optionsId, show) {
-            document.getElementById(optionsId).style.display = show ? 'block' : 'none';
-        }
-
-        function toggleSubmitButtons(type, isSequence) {
-            const classBtn = document.getElementById(type + 'SubmitBtn');
-            const sequenceBtn = document.getElementById(type + 'SequenceBtn');
-            
-            if (isSequence) {
-                classBtn.style.display = 'none';
-                sequenceBtn.style.display = 'inline-block';
-            } else {
-                classBtn.style.display = 'inline-block';
-                sequenceBtn.style.display = 'none';
-            }
-        }
+        
 
         // Tabs
         function openTab(evt, tabName) {
@@ -342,7 +235,6 @@
         document.querySelector('input[name="folderFiles"]').addEventListener('change', function(e) {
             updateFileInfo(e.target.files, 'Folder contents');
         });
-        
         function updateFileInfo(files, type) {
             const fileInfo = document.getElementById('fileInfo');
             if (files.length === 0) {
@@ -378,8 +270,6 @@
         document.getElementById('uploadForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData();
-            
-            // Add files
             const javaFiles = document.querySelector('input[name="javaFiles"]').files;
             for (let i = 0; i < javaFiles.length; i++) {
                 formData.append('files', javaFiles[i]);
@@ -390,53 +280,25 @@
                     formData.append('files', folderFiles[i]);
                 }
             }
-            
-            // Add diagram type and options
-            const diagramType = document.querySelector('input[name="diagramType"]:checked').value;
-            formData.append('diagramType', diagramType);
-            
-            if (diagramType === 'sequence') {
-                const entryClass = document.querySelector('input[name="entryClass"]').value;
-                const entryMethod = document.querySelector('input[name="entryMethod"]').value;
-                if (entryClass) formData.append('entryClass', entryClass);
-                if (entryMethod) formData.append('entryMethod', entryMethod);
-            }
-            
             submitFormData(formData);
         });
 
         // Handle Editor Form
         document.getElementById('editorForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const formData = new FormData();
-            
-            // Add code
-            formData.append('code', codeMirrorEditor.getValue());
-            
-            // Add diagram type and options
-            const diagramType = document.querySelector('input[name="diagramTypeEditor"]:checked').value;
-            formData.append('diagramType', diagramType);
-            
-            if (diagramType === 'sequence') {
-                const entryClass = document.querySelector('input[name="entryClassEditor"]').value;
-                const entryMethod = document.querySelector('input[name="entryMethodEditor"]').value;
-                if (entryClass) formData.append('entryClass', entryClass);
-                if (entryMethod) formData.append('entryMethod', entryMethod);
-            }
-            
-            submitFormData(formData);
+            document.getElementById('javaEditor').value = codeMirrorEditor.getValue();
+            submitForm(this);
         });
 
-        // Submit form data
+
+        // Submit Upload
         function submitFormData(formData) {
             var diagramDiv = document.getElementById('diagram');
             var syntaxTextarea = document.getElementById('diagramSyntax');
             diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
             showDiagram();
-            
             const contextPath = window.location.pathname.split('/')[1];
             const servletPath = '/DiagramGenerator';
-            
             fetch(`/${contextPath}${servletPath}`, {
                 method: 'POST',
                 body: formData
@@ -444,10 +306,27 @@
             .then(r => r.text())
             .then(data => {
                 renderDiagram(data);
-                // Reset forms
                 document.getElementById('uploadForm').reset();
-                document.getElementById('fileInfo').textContent = 'No files selected';
             })
+            .catch(error => {
+                diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+            });
+        }
+
+        // Submit Editor
+        function submitForm(form) {
+            var formData = new FormData(form);
+            var diagramDiv = document.getElementById('diagram');
+            diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+            showDiagram();
+            const contextPath = window.location.pathname.split('/')[1];
+            const servletPath = '/DiagramGenerator';
+            fetch(`/${contextPath}${servletPath}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.text())
+            .then(data => renderDiagram(data))
             .catch(error => {
                 diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
             });
@@ -456,12 +335,13 @@
         // Render diagram
         function renderDiagram(data) {
             var diagramDiv = document.getElementById('diagram');
-            diagramDiv.innerHTML = "";
+            diagramDiv.innerHtml = ""
             var syntaxTextarea = document.getElementById('diagramSyntax');
             syntaxTextarea.value = data;
             diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
             mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
         }
+        
         
         function clearDiagram() {
             document.getElementById('diagram').innerHTML = '';
@@ -470,23 +350,26 @@
             document.querySelector('input[name="folderFiles"]').value = '';
             document.getElementById('fileInfo').textContent = 'No files selected';
             codeMirrorEditor.setValue('');
-            
-            // Reset radio buttons
-            document.querySelector('input[name="diagramType"][value="class"]').checked = true;
-            document.querySelector('input[name="diagramTypeEditor"][value="class"]').checked = true;
-            
-            // Reset sequence options
-            toggleSequenceOptions('sequenceOptionsUpload', false);
-            toggleSequenceOptions('sequenceOptionsEditor', false);
-            toggleSubmitButtons('upload', false);
-            toggleSubmitButtons('editor', false);
-            
-            // Clear entry point fields
-            document.querySelector('input[name="entryClass"]').value = '';
-            document.querySelector('input[name="entryMethod"]').value = '';
-            document.querySelector('input[name="entryClassEditor"]').value = '';
-            document.querySelector('input[name="entryMethodEditor"]').value = '';
         }
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
