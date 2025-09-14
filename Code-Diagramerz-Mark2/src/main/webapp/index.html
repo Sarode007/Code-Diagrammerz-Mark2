@@ -671,12 +671,36 @@
         }*/
 
         // Submit Editor
+// function submitForm(form) {
+//     var formData = new FormData(form);
+//     var diagramDiv = document.getElementById('diagram');
+//     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+//     showDiagram();
+
+//     const servletPath = '/DiagramGenerator';
+
+//     fetch(servletPath, {
+//         method: 'POST',
+//         body: formData
+//     })
+//     .then(response => {
+//         if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
+//         return response.text();
+//     })
+//     .then(data => renderDiagram(data))
+//     .catch(error => {
+//         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+//         console.error('Fetch error (editor):', error);
+//     });
+// }
+
 function submitForm(form) {
     var formData = new FormData(form);
     var diagramDiv = document.getElementById('diagram');
     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
     showDiagram();
 
+    // Servlet endpoint (works on Render)
     const servletPath = '/DiagramGenerator';
 
     fetch(servletPath, {
@@ -690,29 +714,28 @@ function submitForm(form) {
     .then(data => renderDiagram(data))
     .catch(error => {
         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
-        console.error('Fetch error (editor):', error);
+        console.error('Fetch error:', error);
     });
 }
 
-
         // Submit Editor
-        function submitForm(form) {
-            var formData = new FormData(form);
-            var diagramDiv = document.getElementById('diagram');
-            diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
-            showDiagram();
-            const contextPath = window.location.pathname.split('/')[1];
-            const servletPath = '/DiagramGenerator';
-            fetch(`/${contextPath}${servletPath}`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(r => r.text())
-            .then(data => renderDiagram(data))
-            .catch(error => {
-                diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
-            });
-        }
+        // function submitForm(form) {
+        //     var formData = new FormData(form);
+        //     var diagramDiv = document.getElementById('diagram');
+        //     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+        //     showDiagram();
+        //     const contextPath = window.location.pathname.split('/')[1];
+        //     const servletPath = '/DiagramGenerator';
+        //     fetch(`/${contextPath}${servletPath}`, {
+        //         method: 'POST',
+        //         body: formData
+        //     })
+        //     .then(r => r.text())
+        //     .then(data => renderDiagram(data))
+        //     .catch(error => {
+        //         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+        //     });
+        // }
 
         // Render diagram
         // function renderDiagram(data) {
@@ -735,7 +758,7 @@ function renderDiagram(data) {
     // Ensure element exists before initializing Mermaid
     const mermaidEl = diagramDiv.querySelector('.mermaid');
     if (mermaidEl) {
-        mermaid.init(undefined, mermaidEl);
+        // mermaid.init(undefined, mermaidEl);
     } else {
         console.warn('No mermaid element found to init.');
     }
