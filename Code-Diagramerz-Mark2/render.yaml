@@ -2,8 +2,15 @@ services:
   - type: web
     name: code-diagramerz
     env: docker
-    buildCommand: mvn clean package
-    startCommand: catalina.sh run
+    plan: free
+    buildCommand: ./mvnw clean package -DskipTests
+    dockerfilePath: ./Dockerfile
+    region: singapore
+    healthCheckPath: /
     envVars:
       - key: PORT
         value: 8080
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

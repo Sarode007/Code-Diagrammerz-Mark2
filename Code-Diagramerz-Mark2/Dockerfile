@@ -1,15 +1,11 @@
+FROM maven:3.8.4-openjdk-17 as builder
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
 FROM tomcat:10-jdk17
-
-# Remove default webapps
-RUN rm -rf /usr/local/tomcat/webapps/*
-
-# Copy the WAR file
-COPY target/Code-Diagramerz-Mark2.war /usr/local/tomcat/webapps/ROOT.war
-
-# Set environment variable for PORT
+COPY --from=builder /app/target/Code-Diagramerz-Mark2.war /usr/local/tomcat/webapps/ROOT.war
 ENV PORT=8080
-
 EXPOSE ${PORT}
-
-# Start Tomcat
 CMD ["catalina.sh", "run"]
