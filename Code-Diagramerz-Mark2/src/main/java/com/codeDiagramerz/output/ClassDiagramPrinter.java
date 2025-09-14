@@ -8,7 +8,7 @@ import java.util.Set;
 import com.codeDiagramerz.model.ParsedClass;
 import com.codeDiagramerz.model.ParsedEnum;
 
-public class MermaidDiagramPrinter {
+public class ClassDiagramPrinter {
 
 	    private final Map<String, ParsedClass> classes;
 	    private final Map<String, ParsedEnum> enums;
@@ -16,7 +16,7 @@ public class MermaidDiagramPrinter {
 	    private final Map<String, Set<String>> inheritance;
 	    private final Map<String, Set<String>> interfaces;
 
-	    public MermaidDiagramPrinter(Map<String, ParsedClass> classes,
+	    public ClassDiagramPrinter(Map<String, ParsedClass> classes,
 	                                 Map<String, ParsedEnum> enums,
 	                                 Map<String, Set<String>> deps,
 	                                 Map<String, Set<String>> inheritance,

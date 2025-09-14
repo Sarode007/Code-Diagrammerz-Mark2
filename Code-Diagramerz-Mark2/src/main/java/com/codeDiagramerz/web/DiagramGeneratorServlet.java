@@ -15,7 +15,7 @@ import java.util.Set;
 
 import com.codeDiagramerz.model.ParsedClass;
 import com.codeDiagramerz.model.ParsedEnum;
-import com.codeDiagramerz.output.MermaidDiagramPrinter;
+import com.codeDiagramerz.output.ClassDiagramPrinter;
 import com.codeDiagramerz.parser.EnhancedJavaParser;
 
 import jakarta.servlet.ServletException;
@@ -89,7 +89,7 @@ public class DiagramGeneratorServlet extends HttpServlet {
 	        Map<String, Set<String>> inheritance = parser.getInheritance();
 	        Map<String, Set<String>> interfaces = parser.getInterfaces();
 
-	        MermaidDiagramPrinter printer = new MermaidDiagramPrinter(
+	        ClassDiagramPrinter printer = new ClassDiagramPrinter(
 	            classes, enums, deps, inheritance, interfaces);
 	        printer.printDiagram(out);
 //	        System.out.println("At End: "+javaFiles);  //For checking puprpose
