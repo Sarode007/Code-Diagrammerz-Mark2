@@ -526,8 +526,8 @@
         <div class="output-section">
             <h3>Class Diagram:</h3>
             <div class="view-toggle">
-                <!-- <button onclick="showDiagram()">Show Diagram</button> -->
-                <!-- <button onclick="showSyntax()">Show Syntax</button> -->
+                <button onclick="showDiagram()">Show Diagram</button>
+                <button onclick="showSyntax()">Show Syntax</button>
                 <!-- <button onclick="downloadDiagram('svg')">Download SVG</button> -->
                 <button onclick="downloadDiagram('jpeg')">Download</button>
                 <button class="clear-btn" onclick="clearDiagram()">Clear Diagram</button>
@@ -649,7 +649,7 @@
 
 
         // Submit Upload
-        function submitFormData(formData) {
+        /*function submitFormData(formData) {
             var diagramDiv = document.getElementById('diagram');
             var syntaxTextarea = document.getElementById('diagramSyntax');
             diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
@@ -668,7 +668,32 @@
             .catch(error => {
                 diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
             });
-        }
+        }*/
+
+        // Submit Editor
+function submitForm(form) {
+    var formData = new FormData(form);
+    var diagramDiv = document.getElementById('diagram');
+    diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+    showDiagram();
+
+    const servletPath = '/DiagramGenerator';
+
+    fetch(servletPath, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
+        return response.text();
+    })
+    .then(data => renderDiagram(data))
+    .catch(error => {
+        diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+        console.error('Fetch error (editor):', error);
+    });
+}
+
 
         // Submit Editor
         function submitForm(form) {
@@ -690,14 +715,32 @@
         }
 
         // Render diagram
-        function renderDiagram(data) {
-            var diagramDiv = document.getElementById('diagram');
-            diagramDiv.innerHtml = ""
-            var syntaxTextarea = document.getElementById('diagramSyntax');
-            syntaxTextarea.value = data;
-            diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
-            mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
-        }
+        // function renderDiagram(data) {
+        //     var diagramDiv = document.getElementById('diagram');
+        //     diagramDiv.innerHtml = ""
+        //     var syntaxTextarea = document.getElementById('diagramSyntax');
+        //     syntaxTextarea.value = data;
+        //     diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
+        //     mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
+        // }
+
+
+// Render diagram
+function renderDiagram(data) {
+    var diagramDiv = document.getElementById('diagram');
+    diagramDiv.innerHTML = "";                 // <-- FIXED: innerHTML (not innerHtml)
+    var syntaxTextarea = document.getElementById('diagramSyntax');
+    syntaxTextarea.value = data;
+    diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
+    // Ensure element exists before initializing Mermaid
+    const mermaidEl = diagramDiv.querySelector('.mermaid');
+    if (mermaidEl) {
+        mermaid.init(undefined, mermaidEl);
+    } else {
+        console.warn('No mermaid element found to init.');
+    }
+}
+
         
         
         function clearDiagram() {
