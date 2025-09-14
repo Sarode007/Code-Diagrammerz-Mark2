@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: code-diagramerz
+    env: docker
+    buildCommand: mvn clean package
+    startCommand: catalina.sh run
+    envVars:
+      - key: PORT
+        value: 8080

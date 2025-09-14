@@ -1,7 +1,15 @@
 FROM tomcat:10-jdk17
 
-# Copy the WAR file directly to webapps
+# Remove default webapps
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+# Copy the WAR file
 COPY target/Code-Diagramerz-Mark2.war /usr/local/tomcat/webapps/ROOT.war
 
-EXPOSE 8080
+# Set environment variable for PORT
+ENV PORT=8080
+
+EXPOSE ${PORT}
+
+# Start Tomcat
 CMD ["catalina.sh", "run"]

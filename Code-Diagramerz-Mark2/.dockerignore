@@ -1,10 +1,8 @@
-.git/
-.gitignore
-*.iml
-.idea/
+target/
+!target/Code-Diagramerz-Mark2.war
+.settings/
 .classpath
 .project
-.settings/
-Dockerfile
-.dockerignore
-README.md
+.vscode/
+build/
+*.class
