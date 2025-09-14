@@ -1,7 +1,10 @@
-target/
-.settings/
+.git/
+.gitignore
+*.iml
+.idea/
 .classpath
 .project
-.vscode/
-build/
-*.class
+.settings/
+Dockerfile
+.dockerignore
+README.md
