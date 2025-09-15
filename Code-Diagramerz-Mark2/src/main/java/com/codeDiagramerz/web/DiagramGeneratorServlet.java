@@ -26,7 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
-@WebServlet("/DiagramGenerator")
+@WebServlet("/dg")
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024, //1MB
     maxFileSize = 1024 * 1024 * 10,  //10MB

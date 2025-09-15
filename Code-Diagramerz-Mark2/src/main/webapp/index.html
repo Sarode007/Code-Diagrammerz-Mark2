@@ -613,73 +613,75 @@
             }
         }
 
-        // Show/hide views
-        function showDiagram() {
-            document.getElementById('diagram').style.display = 'block';
-            document.getElementById('diagramSyntax').style.display = 'none';
-        }
-        function showSyntax() {
-            document.getElementById('diagram').style.display = 'none';
-            document.getElementById('diagramSyntax').style.display = 'block';
-        }
-
-        // Handle Upload Form
-        document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData();
-            const javaFiles = document.querySelector('input[name="javaFiles"]').files;
-            for (let i = 0; i < javaFiles.length; i++) {
-                formData.append('files', javaFiles[i]);
-            }
-            const folderFiles = document.querySelector('input[name="folderFiles"]').files;
-            for (let i = 0; i < folderFiles.length; i++) {
-                if (folderFiles[i].name.endsWith('.java')) {
-                    formData.append('files', folderFiles[i]);
-                }
-            }
-            submitFormData(formData);
-        });
-
-        // Handle Editor Form
-        document.getElementById('editorForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('javaEditor').value = codeMirrorEditor.getValue();
-            submitForm(this);
-        });
 
 
-        // Submit Upload
-        /*function submitFormData(formData) {
-            var diagramDiv = document.getElementById('diagram');
-            var syntaxTextarea = document.getElementById('diagramSyntax');
-            diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
-            showDiagram();
-            const contextPath = window.location.pathname.split('/')[1];
-            const servletPath = '/DiagramGenerator';
-            fetch(`/${contextPath}${servletPath}`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(r => r.text())
-            .then(data => {
-                renderDiagram(data);
-                document.getElementById('uploadForm').reset();
-            })
-            .catch(error => {
-                diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
-            });
-        }*/
+//         // Show/hide views
+//         function showDiagram() {
+//             document.getElementById('diagram').style.display = 'block';
+//             document.getElementById('diagramSyntax').style.display = 'none';
+//         }
+//         function showSyntax() {
+//             document.getElementById('diagram').style.display = 'none';
+//             document.getElementById('diagramSyntax').style.display = 'block';
+//         }
 
-        // Submit Editor
-// function submitForm(form) {
+//         // Handle Upload Form
+//         document.getElementById('uploadForm').addEventListener('submit', function(e) {
+//             e.preventDefault();
+//             const formData = new FormData();
+//             const javaFiles = document.querySelector('input[name="javaFiles"]').files;
+//             for (let i = 0; i < javaFiles.length; i++) {
+//                 formData.append('files', javaFiles[i]);
+//             }
+//             const folderFiles = document.querySelector('input[name="folderFiles"]').files;
+//             for (let i = 0; i < folderFiles.length; i++) {
+//                 if (folderFiles[i].name.endsWith('.java')) {
+//                     formData.append('files', folderFiles[i]);
+//                 }
+//             }
+//             // submitFormData(formData);
+//             submitForm({ elements: [], formData }); // Adjusted to match new submitForm signature
+//         });
+
+//         // Handle Editor Form
+//         document.getElementById('editorForm').addEventListener('submit', function(e) {
+//             e.preventDefault();
+//             document.getElementById('javaEditor').value = codeMirrorEditor.getValue();
+//             submitForm(this);
+//         });
+
+
+//         // Submit Upload (OLD)
+//         // function submitFormData(formData) {
+//         //     var diagramDiv = document.getElementById('diagram');
+//         //     var syntaxTextarea = document.getElementById('diagramSyntax');
+//         //     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+//         //     showDiagram();
+//         //     const contextPath = window.location.pathname.split('/')[1];
+//         //     const servletPath = '/DiagramGenerator';
+//         //     fetch(`/${contextPath}${servletPath}`, {
+//         //         method: 'POST',
+//         //         body: formData
+//         //     })
+//         //     .then(r => r.text())
+//         //     .then(data => {
+//         //         renderDiagram(data);
+//         //         document.getElementById('uploadForm').reset();
+//         //     })
+//         //     .catch(error => {
+//         //         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+//         //     });
+//         // }
+
+//         //new for docker
+//         function submitForm(form) {
 //     var formData = new FormData(form);
 //     var diagramDiv = document.getElementById('diagram');
 //     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
 //     showDiagram();
 
-//     const servletPath = '/DiagramGenerator';
-
-//     fetch(servletPath, {
+//     // ✅ Correct: relative to same origin
+//     fetch('/DiagramGenerator', {
 //         method: 'POST',
 //         body: formData
 //     })
@@ -690,20 +692,94 @@
 //     .then(data => renderDiagram(data))
 //     .catch(error => {
 //         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
-//         console.error('Fetch error (editor):', error);
+//         console.error('Fetch error:', error);
 //     });
 // }
 
-function submitForm(form) {
-    var formData = new FormData(form);
-    var diagramDiv = document.getElementById('diagram');
+
+
+// // new for docker
+// function submitForm(form) {
+//     var formData = new FormData(form);
+//     var diagramDiv = document.getElementById('diagram');
+//     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+//     showDiagram();
+
+//     // ✅ Correct: relative to same origin
+//     fetch('/DiagramGenerator', {
+//         method: 'POST',
+//         body: formData
+//     })
+//     .then(response => {
+//         if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
+//         return response.text();
+//     })
+//     .then(data => renderDiagram(data))
+//     .catch(error => {
+//         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+//         console.error('Fetch error:', error);
+//     });
+// }
+
+
+
+//         // Submit Editor(old)
+//         // function submitForm(form) {
+//         //     var formData = new FormData(form);
+//         //     var diagramDiv = document.getElementById('diagram');
+//         //     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
+//         //     showDiagram();
+//         //     const contextPath = window.location.pathname.split('/')[1];
+//         //     
+//         //     const servletPath = '/DiagramGenerator';
+//         //     fetch(`/${contextPath}${servletPath}`, {
+//         //         method: 'POST',
+//         //         body: formData
+//         //     })
+//         //     .then(r => r.text())
+//         //     .then(data => renderDiagram(data))
+//         //     .catch(error => {
+//         //         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
+//         //     });
+//         // }
+        
+//         // Render diagram (old)
+//         function renderDiagram(data) {
+//             var diagramDiv = document.getElementById('diagram');
+//             diagramDiv.innerHtml = ""
+//             var syntaxTextarea = document.getElementById('diagramSyntax');
+//             syntaxTextarea.value = data;
+//             diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
+//             mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
+//         }
+        
+        
+//         function clearDiagram() {
+//             document.getElementById('diagram').innerHTML = '';
+//             document.getElementById('diagramSyntax').value = '';
+//             document.querySelector('input[name="javaFiles"]').value = '';
+//             document.querySelector('input[name="folderFiles"]').value = '';
+//             document.getElementById('fileInfo').textContent = 'No files selected';
+//             codeMirrorEditor.setValue('');
+//         }
+
+
+
+/* ---------- mermaid + codemirror init (keep your existing code above) ---------- */
+/* (Assume mermaid and CodeMirror initialization remain unchanged) */
+
+/* Utility: show/hide */
+function showDiagram(){ document.getElementById('diagram').style.display='block'; document.getElementById('diagramSyntax').style.display='none'; }
+function showSyntax(){ document.getElementById('diagram').style.display='none'; document.getElementById('diagramSyntax').style.display='block'; }
+
+/* Central send function: accepts a FormData and posts to the servlet */
+function sendFormData(formData){
+    const diagramDiv = document.getElementById('diagram');
     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
     showDiagram();
 
-    // Servlet endpoint (works on Render)
-    const servletPath = '/DiagramGenerator';
-
-    fetch(servletPath, {
+    // Use relative URL — same origin, same app context.
+    fetch('/dg', {
         method: 'POST',
         body: formData
     })
@@ -712,68 +788,67 @@ function submitForm(form) {
         return response.text();
     })
     .then(data => renderDiagram(data))
-    .catch(error => {
-        diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
-        console.error('Fetch error:', error);
+    .catch(err => {
+        diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${err.message}</div>`;
+        console.error('Fetch error:', err);
     });
 }
 
-        // Submit Editor
-        // function submitForm(form) {
-        //     var formData = new FormData(form);
-        //     var diagramDiv = document.getElementById('diagram');
-        //     diagramDiv.innerHTML = '<div style="padding:20px;text-align:center;">Generating diagram...</div>';
-        //     showDiagram();
-        //     const contextPath = window.location.pathname.split('/')[1];
-        //     const servletPath = '/DiagramGenerator';
-        //     fetch(`/${contextPath}${servletPath}`, {
-        //         method: 'POST',
-        //         body: formData
-        //     })
-        //     .then(r => r.text())
-        //     .then(data => renderDiagram(data))
-        //     .catch(error => {
-        //         diagramDiv.innerHTML = `<div style="color:red;">Error generating diagram: ${error.message}</div>`;
-        //     });
-        // }
+/* Upload form handler -> build FormData properly and call sendFormData */
+document.getElementById('uploadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const fd = new FormData();
+    const javaFiles = document.querySelector('input[name="javaFiles"]').files;
+    for (let i = 0; i < javaFiles.length; i++) fd.append('files', javaFiles[i]);
 
-        // Render diagram
-        // function renderDiagram(data) {
-        //     var diagramDiv = document.getElementById('diagram');
-        //     diagramDiv.innerHtml = ""
-        //     var syntaxTextarea = document.getElementById('diagramSyntax');
-        //     syntaxTextarea.value = data;
-        //     diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
-        //     mermaid.init(undefined, diagramDiv.querySelector('.mermaid'));
-        // }
+    const folderFiles = document.querySelector('input[name="folderFiles"]').files;
+    for (let i = 0; i < folderFiles.length; i++){
+        if (folderFiles[i].name.endsWith('.java')) fd.append('files', folderFiles[i]);
+    }
 
+    sendFormData(fd);
+});
 
-// Render diagram
-function renderDiagram(data) {
-    var diagramDiv = document.getElementById('diagram');
-    diagramDiv.innerHTML = "";                 // <-- FIXED: innerHTML (not innerHtml)
-    var syntaxTextarea = document.getElementById('diagramSyntax');
-    syntaxTextarea.value = data;
+/* Editor form handler -> create FormData from the form element (this is the correct FormData usage) */
+document.getElementById('editorForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    // Make sure hidden textarea contains the editor text (so the servlet reads it)
+    document.getElementById('javaEditor').value = codeMirrorEditor.getValue();
+
+    // 'this' is the form element, so new FormData(this) is valid
+    const fd = new FormData(this);
+    sendFormData(fd);
+});
+
+/* Render diagram safely (fixes innerHtml typo and ensures mermaid is initialized) */
+function renderDiagram(data){
+    const diagramDiv = document.getElementById('diagram');
+    diagramDiv.innerHTML = '';                // clear
+    document.getElementById('diagramSyntax').value = data || '';
+
+    if (!data || !data.trim()){
+        diagramDiv.innerHTML = '<div style="padding:20px;color:#666;">No diagram returned from server.</div>';
+        return;
+    }
+
     diagramDiv.innerHTML = '<div class="mermaid">' + data + '</div>';
-    // Ensure element exists before initializing Mermaid
     const mermaidEl = diagramDiv.querySelector('.mermaid');
-    if (mermaidEl) {
-        // mermaid.init(undefined, mermaidEl);
-    } else {
-        console.warn('No mermaid element found to init.');
+    if (mermaidEl){
+        try { mermaid.init(undefined, mermaidEl); }
+        catch(e){ console.warn('Mermaid init failed:', e); }
     }
 }
 
-        
-        
-        function clearDiagram() {
-            document.getElementById('diagram').innerHTML = '';
-            document.getElementById('diagramSyntax').value = '';
-            document.querySelector('input[name="javaFiles"]').value = '';
-            document.querySelector('input[name="folderFiles"]').value = '';
-            document.getElementById('fileInfo').textContent = 'No files selected';
-            codeMirrorEditor.setValue('');
-        }
+/* Clear */
+function clearDiagram(){
+    document.getElementById('diagram').innerHTML = '';
+    document.getElementById('diagramSyntax').value = '';
+    document.querySelector('input[name="javaFiles"]').value = '';
+    document.querySelector('input[name="folderFiles"]').value = '';
+    document.getElementById('fileInfo').textContent = 'No files selected';
+    codeMirrorEditor.setValue('');
+}
+
 
 
     // Download SVG
